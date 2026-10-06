@@ -1,50 +1,84 @@
-# Welcome to your Expo app 👋
+# Ustad — Worker App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Mobile app for tradespeople on **Ustad**, a home-services marketplace for Pakistan. Workers go online, receive bookings, move each job through its stages with one tap, and watch their earnings and career level grow.
 
-## Get started
+> Pakistan's skilled workers have no diploma or ladder to show for years of work. Ustad gives them one: five levels from **Hunarmand** to **Legend**, with lower commission and real rewards at each step.
 
-1. Install dependencies
+## Demo
 
-   ```bash
-   npm install
-   ```
+- Demo video: _add link here_
+- Screenshots: _add `screenshots/dashboard.png`, `screenshots/register.png`_
 
-2. Start the app
+## Features
 
-   ```bash
-   npx expo start
-   ```
+- Worker registration with trade selection (electrician, plumber, painter, carpenter, AC technician and more)
+- Online / offline toggle
+- **Level card** with progress bar toward the next level, and the current commission rate
+- **Earnings** for today, this week, this month, and pending commission
+- Incoming bookings with one-tap status updates: Accept, On my way, Arrived, Start work, Complete
+- Level and job count update automatically when a job is completed
 
-In the output, you'll find options to open the app in a
+## Worker level system
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+| Level | Name | Jobs | Commission |
+|-------|------|------|-----------|
+| 1 | Hunarmand | 0-50 | 12% |
+| 2 | Maahir | 51-150 | 10% |
+| 3 | Ustad | 151-350 | 8% |
+| 4 | Grand Ustad | 351-700 | 7% |
+| 5 | Legend | 700+ | 5% |
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Commission falls as workers level up. The customer pays the worker in cash; the worker sends the commission to the platform.
 
-## Get a fresh project
+## Tech stack
 
-When you're ready, run:
+- React Native with Expo (SDK 54) and Expo Router
+- Axios for API calls, React Context for auth state
+- Node.js / Express / PostgreSQL backend deployed on Railway (separate repo, private)
+- Built as an installable Android APK with EAS Build
 
-```bash
-npm run reset-project
+## Project structure
+
+```
+app/
+  _layout.tsx
+  context/AuthContext.js
+  utils/api.js          API base URL (the Railway backend)
+  screens/
+    LoginScreen.js
+    RegisterScreen.js
+    DashboardScreen.js
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Run locally
 
-## Learn more
+```bash
+npm install
+npx expo start --clear
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+Scan the QR code with Expo Go (SDK 54). The app talks to the production API configured in `app/utils/api.js`.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Build an Android APK
 
-## Join the community
+```bash
+eas build --platform android --profile preview
+```
 
-Join our community of developers creating universal apps.
+Package name: `com.msaifuk.ustadpartner`.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Current limitations
+
+- Verification is a manual flag set by an admin; there is no document upload flow yet
+- No push notifications, so new bookings appear when the dashboard is refreshed
+- No live location sharing or map
+- Certificates and level rewards (printed certificate, bonuses, insurance) are designed but not built
+- Only tested on Android
+
+## Related repositories
+
+- [ustad-customer-app](https://github.com/msaifuk/ustad-customer-app) — app for customers
+- [ustad-admin-dashboard](https://github.com/msaifuk/ustad-admin-dashboard) — admin web dashboard
+- ustad-backend — Node.js API (private; available on request)
+
+Built by [@msaifuk](https://github.com/msaifuk).
