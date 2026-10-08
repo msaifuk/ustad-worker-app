@@ -70,6 +70,29 @@ export default function DashboardScreen({ navigation }) {
     }
   };
 
+  const declineBooking = (booking) => {
+    Alert.alert(
+      'Decline this job?',
+      'Yeh job kisi aur worker ko de di jayegi.',
+      [
+        { text: 'No', style: 'cancel' },
+        {
+          text: 'Yes, decline',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const res = await api.put(`/bookings/${booking.id}/decline`);
+              Alert.alert('Done', res.data.message);
+              fetchData();
+            } catch (error) {
+              Alert.alert('Error', error.response?.data?.message || 'Could not decline the job');
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const onRefresh = () => {
     setRefreshing(true);
     fetchData();
@@ -254,7 +277,7 @@ export default function DashboardScreen({ navigation }) {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.declineBtn}
-                  onPress={() => updateBookingStatus(booking.id, 'cancelled')}
+                  onPress={() => declineBooking(booking)}
                 >
                   <Text style={styles.declineBtnText}>❌ Decline</Text>
                 </TouchableOpacity>
@@ -262,12 +285,20 @@ export default function DashboardScreen({ navigation }) {
             )}
 
             {booking.status === 'accepted' && (
-              <TouchableOpacity
-                style={styles.actionBtn}
-                onPress={() => updateBookingStatus(booking.id, 'on_the_way')}
-              >
-                <Text style={styles.actionBtnText}>🚗 On My Way</Text>
-              </TouchableOpacity>
+              <>
+                <TouchableOpacity
+                  style={styles.actionBtn}
+                  onPress={() => updateBookingStatus(booking.id, 'on_the_way')}
+                >
+                  <Text style={styles.actionBtnText}>🚗 On My Way</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.cantMakeBtn}
+                  onPress={() => declineBooking(booking)}
+                >
+                  <Text style={styles.cantMakeBtnText}>Can't make it</Text>
+                </TouchableOpacity>
+              </>
             )}
 
             {booking.status === 'on_the_way' && (
@@ -594,6 +625,19 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
     fontSize: 14,
+  },
+  cantMakeBtn: {
+    borderRadius: 8,
+    padding: 10,
+    alignItems: 'center',
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: '#ef4444',
+  },
+  cantMakeBtnText: {
+    color: '#ef4444',
+    fontWeight: '600',
+    fontSize: 13,
   },
   bottomSpace: {
     height: 40,
