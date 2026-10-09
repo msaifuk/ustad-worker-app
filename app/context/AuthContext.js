@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect, useRef } from 'r
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api, { setUnauthorizedHandler } from '../utils/api';
+import { registerForPush, unregisterPush } from '../utils/notifications';
 
 const AuthContext = createContext();
 
@@ -34,6 +35,7 @@ export const AuthProvider = ({ children }) => {
       if (storedToken && storedWorker) {
         loggedInRef.current = true;
         setWorker(JSON.parse(storedWorker));
+        registerForPush(); // refresh the push token for an already logged-in worker
       }
     } catch (error) {
       console.log('Auth load error:', error);
@@ -50,6 +52,7 @@ export const AuthProvider = ({ children }) => {
       await AsyncStorage.setItem('worker', JSON.stringify(worker));
       loggedInRef.current = true;
       setWorker(worker);
+      registerForPush();
       return { success: true };
     } catch (error) {
       return {
@@ -60,6 +63,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
+    // Tell the server to stop sending alerts to this phone (but never block logout for long).
+    await Promise.race([unregisterPush(), new Promise((r) => setTimeout(r, 3000))]);
     loggedInRef.current = false;
     await AsyncStorage.removeItem('wtoken');
     await AsyncStorage.removeItem('worker');

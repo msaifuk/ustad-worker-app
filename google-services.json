@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "841148045164",
+    "project_id": "ustad-70093",
+    "storage_bucket": "ustad-70093.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:841148045164:android:5e4a73043521a9bc26c549",
+        "android_client_info": {
+          "package_name": "com.msaifuk.ustad"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIm_pJ74l4EQhklnuukRBFuMC8UPm0mlQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:841148045164:android:c595a4e07375cc5b26c549",
+        "android_client_info": {
+          "package_name": "com.msaifuk.ustadpartner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIm_pJ74l4EQhklnuukRBFuMC8UPm0mlQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
