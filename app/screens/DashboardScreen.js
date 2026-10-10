@@ -23,6 +23,7 @@ export default function DashboardScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [togglingOnline, setTogglingOnline] = useState(false);
+  const [blocked, setBlocked] = useState(null); // message when the account is suspended or banned
 
   useEffect(() => {
     fetchData();
@@ -39,8 +40,16 @@ export default function DashboardScreen({ navigation }) {
       setIsOnline(profileRes.data.worker.is_online);
       setEarnings(earningsRes.data.earnings);
       setBookings(bookingsRes.data.bookings);
+      setBlocked(null);
     } catch (error) {
-      console.log('Error:', error);
+      const data = error.response?.data;
+      if (error.response?.status === 403 && String(data?.code || '').startsWith('ACCOUNT_')) {
+        setBlocked(data.message || 'Your account is not active. Please contact Ustad support.');
+        setIsOnline(false);
+        setBookings([]);
+      } else {
+        console.log('Error:', error);
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -54,7 +63,7 @@ export default function DashboardScreen({ navigation }) {
       setIsOnline(response.data.is_online);
       Alert.alert('Status', response.data.message);
     } catch (error) {
-      Alert.alert('Error', 'Could not update status');
+      Alert.alert('Error', error.response?.data?.message || 'Could not update status');
     } finally {
       setTogglingOnline(false);
     }
@@ -129,7 +138,26 @@ export default function DashboardScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
+      {/* Account suspended or banned */}
+      {blocked && (
+        <View style={styles.blockedBox}>
+          <Text style={styles.blockedTitle}>⛔ Aapka account active nahi hai</Text>
+          <Text style={styles.blockedText}>{blocked}</Text>
+          <Text style={styles.blockedText}>Madad ke liye Ustad support se rabta karein.</Text>
+        </View>
+      )}
+
+      {/* Waiting for the admin to verify this worker */}
+      {!blocked && profile?.worker?.is_verified === false && (
+        <View style={styles.pendingBox}>
+          <Text style={styles.pendingText}>
+            ⏳ Aapka account approval ke intezar mein hai. Verify hone ke baad hi aapko jobs milengi.
+          </Text>
+        </View>
+      )}
+
       {/* Online Toggle */}
+      {!blocked && (
       <TouchableOpacity
         style={[styles.onlineToggle, isOnline ? styles.onlineActive : styles.onlineInactive]}
         onPress={toggleOnline}
@@ -146,6 +174,7 @@ export default function DashboardScreen({ navigation }) {
           </>
         )}
       </TouchableOpacity>
+      )}
 
       {/* Level Card */}
       {levelProgress && (
@@ -350,6 +379,35 @@ const getStatusColor = (status) => {
 };
 
 const styles = StyleSheet.create({
+  blockedBox: {
+    backgroundColor: '#fee2e2',
+    borderRadius: 12,
+    padding: 16,
+    marginHorizontal: 16,
+    marginTop: 16,
+  },
+  blockedTitle: {
+    color: '#b91c1c',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 6,
+  },
+  blockedText: {
+    color: '#7f1d1d',
+    fontSize: 14,
+    marginTop: 2,
+  },
+  pendingBox: {
+    backgroundColor: '#fef3c7',
+    borderRadius: 12,
+    padding: 14,
+    marginHorizontal: 16,
+    marginTop: 16,
+  },
+  pendingText: {
+    color: '#92400e',
+    fontSize: 14,
+  },
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',
